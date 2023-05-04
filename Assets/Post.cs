@@ -12,11 +12,15 @@ public class Post : MonoBehaviour
     [SerializeField] private TextMeshPro occupationProgressLabel;
 
     [Header("Static")]
+    [SerializeField] private float areaRange = 3;
+    [SerializeField] private LayerMask unitLayer;
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material team1Material;
     [SerializeField] private Material team2Material;
-    [SerializeField] private float areaRange = 3;
-    [SerializeField] private LayerMask unitLayer;
+    private static Material s_defaultMaterial;
+    private static Material s_team1Material;
+    private static Material s_team2Material;
+
 
     [Header("Dynamic")]
     [SerializeField] private Team teamOccupied;
@@ -28,6 +32,9 @@ public class Post : MonoBehaviour
 
     private void Awake()
     {
+        s_defaultMaterial = defaultMaterial;
+        s_team1Material = team1Material;
+        s_team2Material = team2Material;
         visual.material = TeamToMaterial(teamOccupied);
     }
 
@@ -42,7 +49,7 @@ public class Post : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1f);
             TickOccupation();
         }
     }
@@ -81,6 +88,18 @@ public class Post : MonoBehaviour
             units[i] = unit;
         }
 
+        // すでに占領済みで、占領していないチームが存在する場合
+        var team =
+            (TeamOccupied == Team.Team1 && team2Count != 0) ? Team.Team2 :
+            (TeamOccupied == Team.Team2 && team1Count != 0) ? Team.Team1 :
+            Team.None;
+        if (team != Team.None)
+        {
+            // 占領していないチームの占領を進捗させる。
+            IncrementOccupying(team);
+            return;
+        }
+
         // 違うチームが混ざっている場合
         if (team1Count != 0 && team2Count != 0)
         {
@@ -89,34 +108,40 @@ public class Post : MonoBehaviour
         }
 
         // 単一のチームの場合
-        var team = team1Count != 0 ? Team.Team1 : Team.Team2;
+        team = team1Count != 0 ? Team.Team1 : Team.Team2;
         // すでに占領済みなら何もしない。
         if (team == teamOccupied) return;
 
-        // 占領継続中の場合
-        var prevTeam = teamOccupying;
-        if (team == prevTeam)
+        IncrementOccupying(team);
+    }
+
+    private void IncrementOccupying(Team team)
+    {
+        // 占領開始した場合
+        if (teamOccupying != team)
+        {
+            teamOccupying = team;
+            occupationProgress = 0;
+            occupationProgressLabel.gameObject.SetActive(true);
+            occupationProgressLabel.text = occupationProgress.ToString();
+            occupationProgressLabel.color = TeamToColor(teamOccupying);
+        }
+        // 占領中の場合
+        else
         {
             // 占領度を1増やす。
             occupationProgress++;
             occupationProgressLabel.text = occupationProgress.ToString();
             // 占領完了した場合
-            if(occupationProgress > occupationProgressMax)
+            if (occupationProgress > occupationProgressMax)
             {
-                teamOccupied = team;
+                teamOccupied = teamOccupied == Team.None ? team : Team.None;
                 teamOccupying = Team.None;
                 occupationProgress = 0;
                 occupationProgressLabel.gameObject.SetActive(false);
                 visual.material = TeamToMaterial(teamOccupied);
             }
-            return;
         }
-        // 占領開始した場合
-        teamOccupying = team;
-        occupationProgress = 0;
-        occupationProgressLabel.gameObject.SetActive(true);
-        occupationProgressLabel.text = occupationProgress.ToString();
-        occupationProgressLabel.color = TeamToColor(teamOccupying);
     }
 
     private void OnDrawGizmos()
@@ -125,7 +150,8 @@ public class Post : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, areaRange);
     }
 
-    public Color TeamToColor(Team team)
+
+    public static Color TeamToColor(Team team)
     {
         switch (team)
         {
@@ -135,14 +161,14 @@ public class Post : MonoBehaviour
             default: return Color.white;
         }
     }
-    public Material TeamToMaterial(Team team)
+    public static Material TeamToMaterial(Team team)
     {
         switch (team)
         {
-            case Team.None: return defaultMaterial;
-            case Team.Team1: return team1Material;
-            case Team.Team2: return team2Material;
-            default: return defaultMaterial;
+            case Team.None: return s_defaultMaterial;
+            case Team.Team1: return s_team1Material;
+            case Team.Team2: return s_team2Material;
+            default: return s_defaultMaterial;
         }
     }
 }

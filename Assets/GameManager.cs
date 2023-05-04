@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
     [SerializeField] private NavMeshAgent player;
     [SerializeField] private NavMeshSurface floor;
     [SerializeField] private Post[] posts;
@@ -20,10 +21,9 @@ public class GameManager : MonoBehaviour
         return posts.Where(p => p.TeamOccupied == team).ToArray();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        
+        Instance = this;
     }
 
     // Update is called once per frame

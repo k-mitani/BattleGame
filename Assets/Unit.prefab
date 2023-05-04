@@ -246,7 +246,7 @@ Transform:
   - {fileID: 956120316188360350}
   - {fileID: 4751749016248565947}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &3310754699014191646
 NavMeshAgent:
@@ -282,7 +282,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269043651a018444abe5176d418a8b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
+  team: 0
+  attackRange: 8
+  attackRange2: 3
+  unitLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  visual: {fileID: 8472400686655852557}
+  hpMax: 3
+  hp: 0
+  attackForce: 10
 --- !u!65 &1368500891912179889
 BoxCollider:
   m_ObjectHideFlags: 0

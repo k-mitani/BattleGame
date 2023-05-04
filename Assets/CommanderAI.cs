@@ -31,7 +31,7 @@ public class CommanderAI : MonoBehaviour
 
             SendCommands();
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.3f);
         }
     }
 
@@ -122,6 +122,19 @@ public class CommanderAI : MonoBehaviour
             }
         }
     }
+
+    internal void OnUnitDead(Unit unit)
+    {
+        units.Remove(unit);
+        if (unit.Command is OccupationCommand cmd)
+        {
+            var info = targetPosts.FirstOrDefault(p => p.TargetPost == cmd.TargetPost);
+            if (info != null)
+            {
+                info.AssignedUnitCount--;
+            }
+        }
+    }
 }
 
 public class TargetPostInfo
@@ -137,7 +150,6 @@ public class Command
     {
         return false;
     }
-
     public virtual Command NextCommand { get; } = WaitCommand.Instance;
 }
 

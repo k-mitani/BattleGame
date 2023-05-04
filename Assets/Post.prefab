@@ -48,16 +48,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visual: {fileID: 1966181791874262933}
   occupationProgressLabel: {fileID: 647498110685316521}
-  defaultMaterial: {fileID: 2100000, guid: 8874b167099761f40a7494e296075195, type: 2}
-  team1Material: {fileID: 2100000, guid: 1429101bd26aebd428889c557778269e, type: 2}
-  team2Material: {fileID: 2100000, guid: ed05b10e1ea91ab4b9114335f8cbae95, type: 2}
   areaRange: 7
   unitLayer:
     serializedVersion: 2
     m_Bits: 64
+  defaultMaterial: {fileID: 2100000, guid: 8874b167099761f40a7494e296075195, type: 2}
+  team1Material: {fileID: 2100000, guid: 1429101bd26aebd428889c557778269e, type: 2}
+  team2Material: {fileID: 2100000, guid: ed05b10e1ea91ab4b9114335f8cbae95, type: 2}
   teamOccupied: 0
   teamOccupying: 0
-  occupationProgressMax: 5
+  occupationProgressMax: 1
   occupationProgress: 0
 --- !u!1 &3810878358172522483
 GameObject:
